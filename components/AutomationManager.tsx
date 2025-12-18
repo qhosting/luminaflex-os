@@ -87,7 +87,7 @@ export const AutomationManager: React.FC = () => {
 
             <div className="mt-8 p-6 bg-white/[0.02] border border-white/5 rounded-3xl flex items-center justify-between">
                <div className="flex items-center space-x-3 text-[10px] font-mono text-[#A0A0A0]">
-                  <Clock size={14} /> <span>Sincronía Drive -> Database: <span className="text-[#4DEEEA]">COMPLETADA</span></span>
+                  <Clock size={14} /> <span>Sincronía Drive {"->"} Database: <span className="text-[#4DEEEA]">COMPLETADA</span></span>
                </div>
                <button className="text-[10px] font-bold text-[#FFD700] uppercase hover:underline">Auditar Logs Cloud</button>
             </div>
