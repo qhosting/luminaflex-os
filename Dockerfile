@@ -1,0 +1,32 @@
+# Etapa 1: Construcción de la aplicación React con Vite
+FROM node:20-alpine AS build-stage
+
+WORKDIR /app
+
+# Copiar manifiestos de dependencias
+COPY package*.json ./
+
+# Instalar dependencias
+RUN npm install
+
+# Copiar el resto del código fuente
+COPY . .
+
+# Construir la aplicación para producción
+RUN npm run build
+
+# Etapa 2: Servidor de producción con Nginx
+FROM nginx:stable-alpine
+
+# Copiar los archivos construidos desde la etapa anterior
+COPY --from=build-stage /app/dist /usr/share/nginx/html
+
+# Copiar la configuración personalizada desde nginx.conf.txt
+# Nginx busca su configuración de sitios en /etc/nginx/conf.d/
+COPY nginx.conf.txt /etc/nginx/conf.d/default.conf
+
+# Exponer el puerto industrial solicitado
+EXPOSE 3000
+
+# Iniciar Nginx
+CMD ["nginx", "-g", "daemon off;"]
