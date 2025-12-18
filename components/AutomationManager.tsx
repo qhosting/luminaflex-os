@@ -26,10 +26,10 @@ interface WorkflowNode {
 
 export const AutomationManager: React.FC = () => {
   const [nodes] = useState<WorkflowNode[]>([
-    { id: 'WF-01', name: 'Chatwoot -> Nexus AI Sync', status: 'Active', type: 'Chatwoot', lastRun: 'Hace 2 min' },
+    { id: 'WF-01', name: 'Chatwoot {"->"} Nexus AI Sync', status: 'Active', type: 'Chatwoot', lastRun: 'Hace 2 min' },
     { id: 'WF-02', name: 'Drive Auto-Backup DXF', status: 'Active', type: 'Drive', lastRun: 'Hace 15 min' },
     { id: 'WF-03', name: 'n8n Master Controller', status: 'Active', type: 'n8n', lastRun: 'Online' },
-    { id: 'WF-05', name: 'DB -> Cloud Drive Backup', status: 'Active', type: 'CloudBackup', lastRun: 'Hace 5 min' },
+    { id: 'WF-05', name: 'DB {"->"} Cloud Drive Backup', status: 'Active', type: 'CloudBackup', lastRun: 'Hace 5 min' },
   ]);
 
   return (
@@ -86,7 +86,7 @@ export const AutomationManager: React.FC = () => {
 
             <div className="mt-8 p-6 bg-white/[0.02] border border-white/5 rounded-3xl flex items-center justify-between">
                <div className="flex items-center space-x-3 text-[10px] font-mono text-[#A0A0A0]">
-                  <Clock size={14} /> <span>Sincronía Drive -&gt; Database: <span className="text-[#4DEEEA]">COMPLETADA</span></span>
+                  <Clock size={14} /> <span>Sincronía Drive {"->"} Database: <span className="text-[#4DEEEA]">COMPLETADA</span></span>
                </div>
                <button className="text-[10px] font-bold text-[#FFD700] uppercase hover:underline">Auditar Logs Cloud</button>
             </div>
