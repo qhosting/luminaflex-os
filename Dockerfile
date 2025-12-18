@@ -1,38 +1,31 @@
-server {
-    listen 3000;
-    server_name localhost;
+# Etapa 1: Construcción de la aplicación React con Vite
+FROM node:20-alpine AS build-stage
 
-    root /usr/share/nginx/html;
-    index index.html;
+WORKDIR /app
 
-    # Habilitar compresión Gzip para activos estáticos
-    gzip on;
-    gzip_vary on;
-    gzip_min_length 10240;
-    gzip_proxied expired no-cache no-store private auth;
-    gzip_types text/plain text/css text/xml text/javascript application/x-javascript application/xml application/javascript;
-    gzip_disable "MSIE [1-6]\.";
+# Copiar manifiestos de dependencias
+COPY package*.json ./
 
-    # Manejo de rutas para Single Page Application (React)
-    location / {
-        try_files $uri $uri/ /index.html;
-        
-        # Encabezados de Seguridad Básicos
-        add_header X-Frame-Options "SAMEORIGIN";
-        add_header X-XSS-Protection "1; mode=block";
-        add_header X-Content-Type-Options "nosniff";
-        add_header Referrer-Policy "strict-origin-when-cross-origin";
-    }
+# Instalar dependencias
+RUN npm install
 
-    # Caché para activos estáticos
-    location /assets/ {
-        expires 1y;
-        add_header Cache-Control "public, no-transform";
-    }
+# Copiar el resto del código fuente
+COPY . .
 
-    # Manejo de errores 
-    error_page 500 502 503 504 /50x.html;
-    location = /50x.html {
-        root /usr/share/nginx/html;
-    }
-}
+# Construir la aplicación para producción
+RUN npm run build
+
+# Etapa 2: Servidor de producción con Nginx
+FROM nginx:stable-alpine
+
+# Copiar los archivos construidos desde la etapa anterior
+COPY --from=build-stage /app/dist /usr/share/nginx/html
+
+# Copiar la configuración personalizada desde nginx.conf.txt
+COPY nginx.conf.txt /etc/nginx/conf.d/default.conf
+
+# Exponer el puerto industrial solicitado
+EXPOSE 3000
+
+# Iniciar Nginx
+CMD ["nginx", "-g", "daemon off;"]
