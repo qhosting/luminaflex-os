@@ -1,0 +1,27 @@
+{
+  "name": "Luminaflex OS",
+  "description": "Sistema Operativo Industrial para Luminaflex. Despliegue optimizado para Easypanel con integración de Postgres y Gemini 3 Pro.",
+  "requestFramePermissions": [
+    "camera"
+  ],
+  "deployment": {
+    "platform": "Easypanel",
+    "engine": "Docker",
+    "domain": "luminaflex.mx",
+    "database": "PostgreSQL",
+    "ai_engine": "Gemini 3 Pro",
+    "env": {
+      "DATABASE_URL": {
+        "description": "Postgres connection string",
+        "required": true,
+        "default": "postgres://postgres:b84b82e34c60d859c28b@qhosting_luminaflex-db:5432/lumina-flex-db?sslmode=disable"
+      },
+      "API_KEY": {
+        "description": "Google Gemini API Key para Nexus IA",
+        "required": true
+      },
+      "NODE_ENV": "production",
+      "PORT": "3000"
+    }
+  }
+}
