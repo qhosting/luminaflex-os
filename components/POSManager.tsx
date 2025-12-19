@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo, useEffect } from 'react';
 import { 
   ShoppingCart, 
@@ -111,7 +110,8 @@ export const POSManager: React.FC = () => {
       return;
     }
     try {
-      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+      const apiKey = (process.env as any).API_KEY;
+      const ai = new GoogleGenAI({ apiKey });
       const itemsStr = currentCart.map(i => i.name).join(', ');
       const response = await ai.models.generateContent({
         model: 'gemini-3-flash-preview',

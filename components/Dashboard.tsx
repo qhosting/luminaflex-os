@@ -54,14 +54,6 @@ interface Order {
   file?: string;
 }
 
-interface AutomationEvent {
-  id: string;
-  timestamp: string;
-  event: string;
-  status: 'SUCCESS' | 'PENDING' | 'ERROR';
-  target: 'n8n' | 'Chatwoot';
-}
-
 interface Toast {
   id: string;
   message: string;
@@ -135,7 +127,8 @@ export const Dashboard: React.FC<{ role: UserRole }> = ({ role }) => {
     addLog("AI VISION: Engine starting for CNC analysis...");
 
     try {
-      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+      const apiKey = (process.env as any).API_KEY;
+      const ai = new GoogleGenAI({ apiKey });
       const base64Data = quoteImage.split(',')[1];
       
       const response = await ai.models.generateContent({
@@ -178,7 +171,8 @@ export const Dashboard: React.FC<{ role: UserRole }> = ({ role }) => {
     addLog(`AI_CHAT: Query received.`);
 
     try {
-      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+      const apiKey = (process.env as any).API_KEY;
+      const ai = new GoogleGenAI({ apiKey });
       const response = await ai.models.generateContent({
         model: 'gemini-3-pro-preview',
         contents: userMsg,
