@@ -1,0 +1,25 @@
+# Etapa 1: Construcción
+FROM node:20-alpine AS build-stage
+
+WORKDIR /app
+
+# Inyectar variables de entorno de Easypanel para el build de Vite
+ARG API_KEY
+ARG DATABASE_URL
+ENV API_KEY=$API_KEY
+ENV DATABASE_URL=$DATABASE_URL
+
+COPY package*.json ./
+RUN npm install
+
+COPY . .
+RUN npm run build
+
+# Etapa 2: Servidor
+FROM nginx:stable-alpine
+COPY --from=build-stage /app/dist /usr/share/nginx/html
+# Usamos el archivo de configuración sincronizado
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+EXPOSE 3000
+CMD ["nginx", "-g", "daemon off;"]
