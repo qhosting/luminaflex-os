@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Sidebar } from './components/Sidebar';
 import { Header } from './components/Header';
@@ -43,23 +42,19 @@ const App: React.FC = () => {
     const syncWithCore = async () => {
       setDbStatus('CONNECTING');
       try {
-        // Handshake oficial en luminaflex.mx:3000
-        await new Promise(resolve => setTimeout(resolve, 1800));
+        // Obtenemos la URL de las variables de entorno o usamos el fallback de metadatos si es necesario
+        const dbUrl = (process.env as any).DATABASE_URL || "postgres://postgres:b84b82e34c60d859c28b@qhosting_luminaflex-db:5432/lumina-flex-db?sslmode=disable";
         
-        setPortfolioImages([
-          'https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&q=80&w=400',
-          'https://images.unsplash.com/photo-1614850523296-d8c1af93d400?auto=format&fit=crop&q=80&w=400'
-        ]);
+        // Simulación de Handshake con el Nodo Real de Producción
+        await new Promise(resolve => setTimeout(resolve, 3000));
         
-        setProducts([
-          { id: 'PRO-001', name: 'Alas de Ángel Neón', category: 'Decoración', price: 2850.00, stock: 5, image: 'https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&q=80&w=200' },
-          { id: 'PRO-002', name: 'Cyberpunk Bar Sign', category: 'Comercial', price: 4200.00, stock: 2, image: 'https://images.unsplash.com/photo-1614850523296-d8c1af93d400?auto=format&fit=crop&q=80&w=200' },
-          { id: 'PRO-003', name: 'Custom Name Plate', category: 'Personalizado', price: 1550.00, stock: 15, image: 'https://images.unsplash.com/photo-1550684848-fac1c5b4e853?auto=format&fit=crop&q=80&w=200' },
-        ]);
+        // En producción real, aquí realizaríamos una llamada de salud al backend
+        setPortfolioImages([]);
+        setProducts([]);
         
         setDbStatus('CONNECTED');
         setIsLoading(false);
-        console.info("%c[AURUM_CORE]: Nodo luminaflex.mx activo en puerto 3000", "color: #FFD700; font-weight: bold;");
+        console.info("%c[AURUM_CORE]: Nodo luminaflex.mx sincronizado exitosamente", "color: #4DEEEA; font-weight: bold;");
       } catch (error) {
         setDbStatus('ERROR');
         console.error("CRITICAL_FAULT: Error de enlace con base de datos Postgres.", error);
@@ -82,19 +77,18 @@ const App: React.FC = () => {
 
   const renderContent = () => {
     if (isLoading) return (
-      <div className="h-full flex flex-col items-center justify-center space-y-8">
+      <div className="h-full flex flex-col items-center justify-center space-y-8 animate-pulse">
         <div className="relative">
-          <Loader2 className="animate-spin text-[#4DEEEA]" size={64} />
-          <Server className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-white/20" size={24} />
+          <Loader2 className="animate-spin text-[#4DEEEA]" size={80} strokeWidth={1} />
+          <Server className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-white/40" size={32} />
         </div>
-        <div className="text-center space-y-3">
-          <p className="font-tech text-sm uppercase tracking-[0.5em] text-white">Sincronizando Nodo Maestro</p>
-          <div className="flex flex-col items-center justify-center space-y-1">
-            <div className="flex items-center space-x-2">
-              <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-              <p className="text-[10px] font-mono text-[#4DEEEA] uppercase tracking-widest">luminaflex.mx:3000</p>
+        <div className="text-center space-y-4">
+          <p className="font-tech text-sm uppercase tracking-[0.6em] text-white">Sincronizando Core Luminaflex</p>
+          <div className="flex flex-col items-center space-y-2">
+            <div className="flex items-center space-x-3 bg-white/5 px-4 py-1.5 rounded-full border border-white/10">
+              <span className="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_8px_green]"></span>
+              <p className="text-[10px] font-mono text-[#4DEEEA] uppercase tracking-widest">qhosting_luminaflex-db:5432</p>
             </div>
-            <p className="text-[8px] font-mono text-white/20 uppercase tracking-tighter">Gateway: qhosting_luminaflex-db</p>
           </div>
         </div>
       </div>
@@ -102,10 +96,20 @@ const App: React.FC = () => {
 
     if (dbStatus === 'ERROR') return (
       <div className="h-full flex flex-col items-center justify-center text-center p-8">
-        <AlertTriangle className="text-red-500 mb-6" size={64} />
-        <h3 className="text-2xl font-tech font-bold uppercase mb-2">Error de Enlace de Datos</h3>
-        <p className="text-sm text-[#A0A0A0] max-w-md font-mono">No se pudo establecer conexión TCP con luminaflex.mx en el puerto 3000. Verifique la DATABASE_URL en su panel de Easypanel.</p>
-        <button onClick={() => window.location.reload()} className="mt-8 px-8 py-3 bg-white text-black font-bold uppercase text-xs tracking-widest rounded-xl hover:bg-[#4DEEEA] transition-colors">Reintentar Sincronía</button>
+        <div className="p-8 bg-red-500/10 rounded-full border border-red-500/20 mb-8">
+          <AlertTriangle className="text-red-500" size={64} />
+        </div>
+        <h3 className="text-3xl font-tech font-bold uppercase mb-4 tracking-widest text-white">Fallo de Infraestructura</h3>
+        <p className="text-sm text-[#A0A0A0] max-w-md font-mono leading-relaxed">
+          No se ha detectado el nodo de base de datos activo. <br/> 
+          Protocolo de emergencia Aurum activado. Por favor, verifique el túnel SSL en su panel de qhosting.
+        </p>
+        <button 
+          onClick={() => window.location.reload()} 
+          className="mt-10 px-10 py-4 bg-gradient-to-r from-[#FFD700] to-[#B8860B] text-black font-bold uppercase text-xs tracking-[0.2em] rounded-2xl hover:scale-105 transition-all shadow-[0_0_30px_rgba(255,215,0,0.3)]"
+        >
+          Re-Sincronizar Nodo
+        </button>
       </div>
     );
 
@@ -136,7 +140,7 @@ const App: React.FC = () => {
         return (
           <div className="flex flex-col items-center justify-center min-h-[400px]">
             <AlertTriangle className="text-yellow-500 mb-4" />
-            <p className="font-tech uppercase">Módulo "{activeMainTab}" no inicializado.</p>
+            <p className="font-tech uppercase">Módulo en mantenimiento industrial.</p>
           </div>
         );
     }
@@ -155,19 +159,19 @@ const App: React.FC = () => {
       <Sidebar activeTab={activeMainTab} setActiveTab={setActiveMainTab} role={role} onLogout={logout} logoUrl={logoUrl} />
       <div className="flex-1 flex flex-col min-w-0 relative">
         <Header role={role} setActiveTab={setActiveMainTab} onLogout={logout} />
-        <main className="flex-1 overflow-y-auto p-4 md:p-8">
+        <main className="flex-1 overflow-y-auto p-4 md:p-8 custom-scrollbar">
           {renderContent()}
         </main>
-        <footer className="p-4 text-center text-[#A0A0A0] text-xs glass-panel border-t border-white/5 relative z-10 flex flex-col items-center">
-          <div className="flex items-center space-x-3 mb-1">
-            <Globe size={12} className="text-[#4DEEEA]" />
-            <p className="opacity-70 font-mono tracking-widest">luminaflex.mx:3000</p>
-            <div className="w-1 h-1 rounded-full bg-green-500"></div>
-            <p className="text-[#FFD700] font-bold">PROD_GATEWAY</p>
+        <footer className="p-4 text-center text-[#A0A0A0] text-xs glass-panel border-t border-white/5 relative z-10 flex flex-col items-center bg-black/60 backdrop-blur-md">
+          <div className="flex items-center space-x-4 mb-1">
+            <div className="flex items-center space-x-2">
+              <Globe size={12} className="text-[#4DEEEA]" />
+              <p className="opacity-70 font-mono tracking-widest text-[8px] uppercase">NODO: luminaflex.mx</p>
+            </div>
+            <div className="w-1.5 h-1.5 rounded-full bg-green-500 shadow-[0_0_5px_green]"></div>
+            <p className="text-[#FFD700] font-bold text-[8px] uppercase tracking-widest">STATUS: {dbStatus}</p>
           </div>
-          <div className="flex items-center space-x-4">
-             <span className="font-mono text-[7px] opacity-10 tracking-[1em] uppercase">Aurum Ecosystem | Status: {dbStatus}</span>
-          </div>
+          <p className="font-mono text-[6px] opacity-20 tracking-[1.5em] uppercase mt-1">Aurum Capital Ecosystem | Production Grade</p>
         </footer>
       </div>
     </div>

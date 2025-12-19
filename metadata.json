@@ -9,6 +9,7 @@
     "engine": "Docker",
     "domain": "luminaflex.mx",
     "database": "PostgreSQL",
+    "database_schema": "schema.sql",
     "ai_engine": "Gemini 3 Pro",
     "env": {
       "DATABASE_URL": {
