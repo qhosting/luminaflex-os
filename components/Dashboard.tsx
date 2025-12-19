@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { 
   LayoutGrid, 
@@ -61,7 +62,7 @@ export const Dashboard: React.FC<{ role: UserRole }> = ({ role }) => {
       const reader = new FileReader();
       reader.onload = () => {
         setQuoteImage(reader.result as string);
-        addToast('Diseño cargado en buffer de visión.', 'info');
+        addToast('Tu diseño está en el buffer de visión.', 'info');
       };
       reader.readAsDataURL(file);
     }
@@ -94,10 +95,10 @@ export const Dashboard: React.FC<{ role: UserRole }> = ({ role }) => {
         meters: result.meters || 2.5, 
         price: (result.meters || 2.5) * 1250 + 1500 
       });
-      addToast('Análisis Vectorial Nexus completado.', 'success');
+      addToast('Tu análisis vectorial Nexus ha finalizado.', 'success');
     } catch (error) {
       console.error(error);
-      addToast('Error en el núcleo de visión IA.', 'error');
+      addToast('Error en tu núcleo de visión IA.', 'error');
     } finally {
       setIsQuoting(false);
     }
@@ -118,7 +119,7 @@ export const Dashboard: React.FC<{ role: UserRole }> = ({ role }) => {
         model: 'gemini-3-pro-preview',
         contents: userMsg,
         config: {
-          systemInstruction: "Eres NEXUS, la inteligencia operativa central de Luminaflex OS. Eres experto en producción industrial de neón flex, costos, logística y metalurgia de precisión. Tu tono es profesional, ejecutivo y futurista. Usa Google Search para validar precios actuales de mercado.",
+          systemInstruction: "Eres NEXUS, la inteligencia operativa central de Luminaflex OS. Tu misión es asistir al usuario en la producción industrial de su marca. Eres experto en costos, logística y metalurgia. Tu tono es ejecutivo, cercano (usa 'tú') y futurista. Usa Google Search para validar datos actuales.",
           tools: [{ googleSearch: {} }]
         }
       });
@@ -126,7 +127,7 @@ export const Dashboard: React.FC<{ role: UserRole }> = ({ role }) => {
       const grounding = response.candidates?.[0]?.groundingMetadata?.groundingChunks as GroundingChunk[] | undefined;
       setAiHistory(prev => [...prev, { role: 'model', text: response.text || '', grounding }]);
     } catch (error) {
-      addToast('Fallo de conexión con Nexus Core.', 'error');
+      addToast('Fallo en tu conexión con Nexus Core.', 'error');
     } finally {
       setIsAiLoading(false);
     }
@@ -136,15 +137,15 @@ export const Dashboard: React.FC<{ role: UserRole }> = ({ role }) => {
     <div className="space-y-8 pb-12 animate-in fade-in duration-1000">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-white/5 pb-10">
         <div>
-          <h3 className="text-5xl font-tech font-bold uppercase tracking-tighter gradient-lumina">Centro de Comando</h3>
-          <p className="text-[11px] text-[#A0A0A0] uppercase tracking-[0.5em] mt-4 font-bold">Estado del Nodo: <span className="text-[#4DEEEA]">PRODUCCIÓN</span></p>
+          <h3 className="text-5xl font-tech font-bold uppercase tracking-tighter gradient-lumina">Tu Centro de Comando</h3>
+          <p className="text-[11px] text-[#A0A0A0] uppercase tracking-[0.5em] mt-4 font-bold">Estado de Tu Nodo: <span className="text-[#4DEEEA]">PRODUCCIÓN</span></p>
         </div>
         <div className="flex flex-wrap gap-2 bg-white/5 p-1 rounded-2xl border border-white/10">
           {[
             { id: 'PRODUCTION', label: 'Producción', icon: LayoutGrid },
             { id: 'QUOTES', label: 'Nexus Vision', icon: Cpu },
             { id: 'AI_NEXUS', label: 'Nexus Core', icon: Bot },
-            { id: 'ECOSYSTEM', label: 'Ecosistema', icon: Network }
+            { id: 'ECOSYSTEM', label: 'Tu Ecosistema', icon: Network }
           ].map(tab => (
             <button 
               key={tab.id}
@@ -161,12 +162,12 @@ export const Dashboard: React.FC<{ role: UserRole }> = ({ role }) => {
       <div className="min-h-[500px]">
         {activeTab === 'PRODUCTION' && (
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 animate-in slide-in-from-bottom-4">
-            {['Diseño', 'Corte CNC', 'Ensamble', 'Control QA'].map((stage, idx) => (
+            {['Tu Diseño', 'Tu Corte CNC', 'Tu Ensamble', 'Tu Control QA'].map((stage, idx) => (
               <div key={idx} className="space-y-4">
                 <h4 className="text-[10px] uppercase tracking-widest font-bold text-[#A0A0A0] px-2">{stage}</h4>
                 <div className="glass-panel min-h-[400px] rounded-[32px] border border-white/5 p-4 flex flex-col items-center justify-center opacity-10">
                   <ClipboardList size={32} />
-                  <p className="text-[8px] uppercase tracking-widest mt-2">Nodo Disponible</p>
+                  <p className="text-[8px] uppercase tracking-widest mt-2">Nodo de Tu Marca Disponible</p>
                 </div>
               </div>
             ))}
@@ -184,14 +185,14 @@ export const Dashboard: React.FC<{ role: UserRole }> = ({ role }) => {
                     ) : (
                       <label className="cursor-pointer flex flex-col items-center text-[#A0A0A0] hover:text-white transition-colors">
                         <Upload size={48} className="text-[#4DEEEA] mb-4" />
-                        <span className="text-[10px] uppercase font-bold tracking-widest">Sincronizar Arte</span>
+                        <span className="text-[10px] uppercase font-bold tracking-widest">Sincroniza Tu Arte</span>
                         <input type="file" className="hidden" onChange={handleImageUpload} accept="image/*" />
                       </label>
                     )}
                     {isQuoting && <div className="absolute inset-0 bg-black/80 flex items-center justify-center"><Loader2 className="animate-spin text-[#4DEEEA]" size={32} /></div>}
                   </div>
                   <button onClick={handleGenerateQuote} disabled={!quoteImage || isQuoting} className="w-full py-5 bg-[#4DEEEA] text-black font-bold uppercase tracking-widest rounded-2xl hover:scale-[1.02] transition-all shadow-xl">
-                    Analizar con Nexus Vision
+                    Analiza con Tu Nexus Vision
                   </button>
                 </div>
                 <div className="aspect-square bg-black/40 rounded-[40px] border border-white/5 p-8 flex items-center justify-center">
@@ -201,13 +202,13 @@ export const Dashboard: React.FC<{ role: UserRole }> = ({ role }) => {
             </div>
             <div className="glass-panel p-10 rounded-[48px] border border-[#FFD700]/20 flex flex-col justify-between">
               <div>
-                <h5 className="font-tech text-2xl text-[#FFD700] uppercase mb-8">Presupuesto Industrial</h5>
+                <h5 className="font-tech text-2xl text-[#FFD700] uppercase mb-8">Tu Presupuesto Industrial</h5>
                 <div className="space-y-6">
-                  <div className="flex justify-between border-b border-white/5 pb-4"><span className="text-[10px] uppercase text-[#A0A0A0]">Metros Trazados</span><span className="font-bold text-lg">{quoteMetrics.meters.toFixed(2)}m</span></div>
-                  <div className="flex justify-between border-b border-white/5 pb-4"><span className="text-[10px] uppercase text-[#A0A0A0]">Costo Materiales</span><span className="text-2xl font-tech text-[#FFD700]">${quoteMetrics.price.toLocaleString()} MXN</span></div>
+                  <div className="flex justify-between border-b border-white/5 pb-4"><span className="text-[10px] uppercase text-[#A0A0A0]">Metros de Tu Marca</span><span className="font-bold text-lg">{quoteMetrics.meters.toFixed(2)}m</span></div>
+                  <div className="flex justify-between border-b border-white/5 pb-4"><span className="text-[10px] uppercase text-[#A0A0A0]">Tu Inversión</span><span className="text-2xl font-tech text-[#FFD700]">${quoteMetrics.price.toLocaleString()} MXN</span></div>
                 </div>
               </div>
-              <button className="w-full py-5 bg-[#FFD700] text-black font-bold uppercase tracking-widest rounded-2xl shadow-xl hover:scale-105 active:scale-95 transition-all mt-8">Emitir Orden de Trabajo</button>
+              <button className="w-full py-5 bg-[#FFD700] text-black font-bold uppercase tracking-widest rounded-2xl shadow-xl hover:scale-105 active:scale-95 transition-all mt-8">Emite Tu Orden de Trabajo</button>
             </div>
           </div>
         )}
@@ -216,8 +217,8 @@ export const Dashboard: React.FC<{ role: UserRole }> = ({ role }) => {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 h-[600px] animate-in slide-in-from-bottom-8">
             <div className="lg:col-span-2 glass-panel rounded-[48px] border border-[#4DEEEA]/20 flex flex-col overflow-hidden">
               <div className="p-6 border-b border-white/5 bg-[#4DEEEA]/5 flex justify-between items-center">
-                <div className="flex items-center space-x-3 text-[#4DEEEA]"><Bot size={20} /><span className="font-tech text-xl uppercase tracking-widest">Nexus Intelligence Core</span></div>
-                <span className="text-[8px] font-mono text-[#4DEEEA] animate-pulse">SISTEMA_GEMINI_3_PRO: ACTIVO</span>
+                <div className="flex items-center space-x-3 text-[#4DEEEA]"><Bot size={20} /><span className="font-tech text-xl uppercase tracking-widest">Tu Nexus Intelligence Core</span></div>
+                <span className="text-[8px] font-mono text-[#4DEEEA] animate-pulse">TU_SISTEMA: ACTIVO</span>
               </div>
               <div className="flex-1 overflow-y-auto p-8 space-y-6">
                 {aiHistory.map((chat, i) => (
@@ -244,7 +245,7 @@ export const Dashboard: React.FC<{ role: UserRole }> = ({ role }) => {
                   type="text" 
                   value={aiMessage}
                   onChange={e => setAiMessage(e.target.value)}
-                  placeholder="Consulte análisis logístico o de costos industriales..."
+                  placeholder="Tu consulta logística o de costos aquí..."
                   className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-6 pr-16 outline-none focus:border-[#4DEEEA]/50 font-tech"
                 />
                 <button className="absolute right-8 top-1/2 -translate-y-1/2 p-3 bg-[#4DEEEA] text-black rounded-xl hover:scale-110 active:scale-95 transition-all">
@@ -254,10 +255,10 @@ export const Dashboard: React.FC<{ role: UserRole }> = ({ role }) => {
             </div>
             <div className="space-y-6">
               <div className="glass-panel p-8 rounded-[48px] border border-white/5">
-                <h5 className="text-[10px] uppercase font-bold text-[#A0A0A0] mb-6 tracking-widest">Métricas de Sincronía</h5>
+                <h5 className="text-[10px] uppercase font-bold text-[#A0A0A0] mb-6 tracking-widest">Tu Sincronía</h5>
                 <div className="space-y-4">
-                  <div className="flex justify-between items-center"><span className="text-xs">Integridad Nexus</span><span className="text-[#4DEEEA] font-tech">99.9%</span></div>
-                  <div className="flex justify-between items-center"><span className="text-xs">Nodo Latencia</span><span className="text-[#FFD700] font-tech">0.1s</span></div>
+                  <div className="flex justify-between items-center"><span className="text-xs">Tu Integridad</span><span className="text-[#4DEEEA] font-tech">99.9%</span></div>
+                  <div className="flex justify-between items-center"><span className="text-xs">Tu Latencia</span><span className="text-[#FFD700] font-tech">0.1s</span></div>
                   <div className="h-1 bg-white/5 rounded-full mt-4"><div className="h-full bg-[#4DEEEA]" style={{width:'99%'}}></div></div>
                 </div>
               </div>
@@ -268,10 +269,10 @@ export const Dashboard: React.FC<{ role: UserRole }> = ({ role }) => {
         {activeTab === 'ECOSYSTEM' && (
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             {[
-              { name: 'Aurum DB (Postgres)', icon: Database, color: 'text-green-500', status: 'En Línea' },
-              { name: 'Google Cloud Node', icon: Network, color: 'text-[#4DEEEA]', status: 'Sincronizado' },
-              { name: 'Nexus Core IA', icon: Bot, color: 'text-[#FFD700]', status: 'Activo' },
-              { name: 'Red Luminaflex.mx', icon: Globe, color: 'text-blue-500', status: 'Online' }
+              { name: 'Tu Base Postgres', icon: Database, color: 'text-green-500', status: 'En Línea' },
+              { name: 'Tu Google Node', icon: Network, color: 'text-[#4DEEEA]', status: 'Sincronizado' },
+              { name: 'Tu Nexus Core', icon: Bot, color: 'text-[#FFD700]', status: 'Activo' },
+              { name: 'Tu Red Luminaflex', icon: Globe, color: 'text-blue-500', status: 'Online' }
             ].map((node, i) => (
               <div key={i} className="glass-panel p-8 rounded-[48px] border border-white/5 flex flex-col items-center text-center group hover:border-[#4DEEEA]/30 transition-all">
                 <div className={`p-6 bg-white/5 rounded-[32px] mb-6 ${node.color}`}><node.icon size={40} /></div>
@@ -283,7 +284,6 @@ export const Dashboard: React.FC<{ role: UserRole }> = ({ role }) => {
         )}
       </div>
 
-      {/* Toasts */}
       <div className="fixed bottom-10 right-10 z-[500] space-y-3 w-72">
         {toasts.map(t => (
           <div key={t.id} className={`p-4 rounded-2xl glass-panel border animate-in slide-in-from-right-4 flex justify-between items-center ${t.type === 'error' ? 'border-red-500/50 text-red-400' : 'border-[#4DEEEA]/50 text-[#4DEEEA]'}`}>

@@ -1,6 +1,8 @@
+
 -- LUMINAFLEX OS | MASTER DATABASE SCHEMA (MIRROR)
 -- NODO: qhosting_luminaflex-db
 -- PROTOCOLO: 741 8 520 | AURUM_SHIELD_V2
+-- NOTA: Toda interacción con esta DB debe priorizar la experiencia de "Tu Legado".
 
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
