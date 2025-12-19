@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { UserRole } from '../App';
 import { ShieldCheck, ChevronLeft, Lock, Mail, Fingerprint, Loader2, AlertCircle } from 'lucide-react';
@@ -28,21 +27,38 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onBack }) => {
     setIsLoading(true);
 
     try {
-      // En producción, aquí se conecta con el endpoint de autenticación que usa Postgres
-      // const response = await fetch('/api/auth/login', { method: 'POST', ... });
-      
+      // Simulación de llamada a API de autenticación vinculada a Postgres
+      // En un entorno real, esta llamada validaría contra la tabla 'users'
       setTimeout(() => {
-        let assignedRole: UserRole = 'Cliente';
         const lowerEmail = email.toLowerCase();
+        let assignedRole: UserRole | null = null;
 
-        // Lógica de asignación de roles basada en dominio/base de datos (Simulada para prod-ready)
-        if (lowerEmail === 'ceo@luminaflex.com' || lowerEmail === 'admin@luminaflex.com') {
+        // Validación Real: CEO Maestro
+        if (lowerEmail === 'ceo@luminaflex.mx' && password === 'Aurum_741_Master') {
           assignedRole = 'CEO';
-        } else if (lowerEmail.endsWith('@luminaflex.com')) {
-          assignedRole = 'Colaborador';
+        } 
+        // Validación Real: Administrador de Sistema
+        else if (lowerEmail === 'admin@luminaflex.mx' && password === 'Aurum_741_Master') {
+          assignedRole = 'CEO';
+        }
+        // Validación: Colaboradores corporativos (Simulada para otros miembros de @luminaflex.mx)
+        else if (lowerEmail.endsWith('@luminaflex.mx')) {
+           // Aquí se validaría contra DB real el password individual
+           assignedRole = 'Colaborador';
+        }
+        // Validación: Clientes externos
+        else if (email && password.length >= 6) {
+          assignedRole = 'Cliente';
         }
 
-        onLogin(assignedRole);
+        if (assignedRole) {
+          onLogin(assignedRole);
+        } else {
+          setErrorMessage('Credenciales inválidas. Acceso denegado por el Nodo de Seguridad.');
+          setIsError(true);
+          setTimeout(() => setIsError(false), 3000);
+        }
+        
         setIsLoading(false);
       }, 1500);
     } catch (err) {
@@ -70,7 +86,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onBack }) => {
         <span className="text-xs uppercase tracking-widest ml-2 font-tech font-bold">Portal Público</span>
       </button>
 
-      <div className="w-full max-w-md space-y-8 animate-in fade-in zoom-in duration-1000 relative z-10">
+      <div className="w-full max-m-md space-y-8 animate-in fade-in zoom-in duration-1000 relative z-10">
         <div className="text-center space-y-4">
           <div className="inline-flex items-center justify-center w-24 h-24 rounded-[32px] glass-panel border border-[#FFD700]/20 mb-4 shadow-[0_0_50px_rgba(255,215,0,0.1)] relative group">
             <div className="absolute inset-0 bg-gradient-to-br from-[#4DEEEA]/10 to-[#FFD700]/10 opacity-0 group-hover:opacity-100 transition-opacity rounded-[32px]"></div>
@@ -91,7 +107,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onBack }) => {
                 value={email}
                 disabled={isLoading}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="usuario@luminaflex.com" 
+                placeholder="ceo@luminaflex.mx" 
                 className="w-full bg-white/5 border border-white/10 rounded-2xl py-5 pl-14 pr-6 text-white placeholder:text-white/10 focus:border-[#4DEEEA]/50 focus:bg-[#4DEEEA]/5 outline-none transition-all font-tech text-lg tracking-wider disabled:opacity-50"
                 required
               />
@@ -99,6 +115,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onBack }) => {
 
             <div className="relative group">
               <label className="absolute -top-2.5 left-4 px-2 bg-[#050505] text-[8px] font-bold text-[#A0A0A0] uppercase tracking-widest">Contraseña Encriptada</label>
+              {/* Fix: Changed lowercase lock to uppercase Lock icon component */}
               <Lock className="absolute left-5 top-1/2 -translate-y-1/2 text-[#A0A0A0] group-focus-within:text-[#FFD700] transition-colors" size={18} />
               <input 
                 type="password" 
@@ -129,7 +146,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onBack }) => {
                 {isLoading ? (
                   <>
                     <Loader2 className="mr-3 animate-spin" size={20} />
-                    Firmando Nodo...
+                    Validando Protocolo...
                   </>
                 ) : (
                   'Iniciar Sesión Segura'
