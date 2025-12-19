@@ -1,36 +1,38 @@
-# LUMINAFLEX OS | DOCKERFILE PRODUCTION (MIRROR)
+# LUMINAFLEX OS | DOCKERFILE PRODUCTION
 # NODO: AURUM_CORE_V2
-# PROTOCOLO: 741 8 520 | TU_SISTEMA_OPERATIVO
+# PROTOCOLO: 741 8 520
 
-FROM node:20-alpine AS build-stage
+# STAGE 1: Build Engine
+FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# 1. Copiamos manifiestos primero para optimizar la caché de capas de Docker
+# Instalación de dependencias
 COPY package*.json ./
-
-# 2. Instalamos todas las dependencias (necesario para tener 'tsc' y 'vite' en el path)
 RUN npm install
 
-# 3. Transferimos el resto de Tu Código al contenedor
+# Copia de código fuente
 COPY . .
 
-# 4. Inyección de Variables de Entorno desde Tu Panel de Control
+# Inyección de variables en tiempo de construcción (Vite)
 ARG API_KEY
 ARG DATABASE_URL
-ENV API_KEY=$API_KEY
-ENV DATABASE_URL=$DATABASE_URL
+ENV VITE_API_KEY=$API_KEY
+ENV VITE_DATABASE_URL=$DATABASE_URL
 
-# 5. Ejecución del Build Industrial
+# Build industrial
 RUN npm run build
 
-# Stage de Producción: Servidor de Alta Disponibilidad
+# STAGE 2: High Availability Server (Nginx)
 FROM nginx:stable-alpine
-COPY --from=build-stage /app/dist /usr/share/nginx/html
 
-# 6. Sincronización de Tu Configuración Nginx Aurum
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+# Copia de los archivos estáticos desde el builder
+COPY --from=builder /app/dist /usr/share/nginx/html
 
+# Inyección de la configuración de Aurum Shield
+COPY nginx.conf.txt /etc/nginx/conf.d/default.conf
+
+# Healthcheck para monitoreo del Nodo
 HEALTHCHECK --interval=30s --timeout=3s \
   CMD curl -f http://localhost:3000/ || exit 1
 

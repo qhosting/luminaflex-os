@@ -1,0 +1,45 @@
+
+version: '3.8'
+
+services:
+  # NODO DE DATOS (POSTGRESQL)
+  db:
+    image: postgres:15-alpine
+    container_name: luminaflex-db
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-lumina_secret_741}
+      POSTGRES_DB: ${POSTGRES_DB:-lumina_os_db}
+    volumes:
+      # PERSISTENCIA CRÍTICA: Los datos no se pierden al reiniciar
+      - lumina_db_data:/var/lib/postgresql/data
+    networks:
+      - lumina-network
+
+  # NODO DE APLICACIÓN (FRONTEND + SYNC ENGINE)
+  app:
+    build:
+      context: .
+      args:
+        API_KEY: ${API_KEY}
+        DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-lumina_secret_741}@db:5432/${POSTGRES_DB:-lumina_os_db}
+    container_name: luminaflex-os
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-lumina_secret_741}@db:5432/${POSTGRES_DB:-lumina_os_db}
+      API_KEY: ${API_KEY}
+    depends_on:
+      - db
+    networks:
+      - lumina-network
+
+networks:
+  lumina-network:
+    driver: bridge
+
+volumes:
+  lumina_db_data:
+    driver: local

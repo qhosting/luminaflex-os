@@ -1,10 +1,10 @@
--- LUMINAFLEX OS | MASTER DATABASE SCHEMA (MIRROR)
+-- LUMINAFLEX OS | MASTER DATABASE SCHEMA
 -- NODO: qhosting_luminaflex-db
 -- PROTOCOLO: 741 8 520 | AURUM_SHIELD_V2
--- NOTA: Tu base de datos está optimizada para la escala de Tu Legado Corporativo.
 
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
+-- TABLA DE IDENTIDAD Y ACCESO
 CREATE TABLE IF NOT EXISTS users (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     email VARCHAR(255) UNIQUE NOT NULL,
@@ -14,9 +14,11 @@ CREATE TABLE IF NOT EXISTS users (
     avatar_url TEXT,
     bio TEXT,
     last_login TIMESTAMP WITH TIME ZONE,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
+-- CATÁLOGO DE PRODUCTOS (NEÓN FLEX & DISEÑOS)
 CREATE TABLE IF NOT EXISTS products (
     id VARCHAR(50) PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
@@ -27,9 +29,11 @@ CREATE TABLE IF NOT EXISTS products (
     max_stock INTEGER DEFAULT 100,
     image_url TEXT,
     metadata JSONB DEFAULT '{}',
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
+-- GESTIÓN DE MATERIA PRIMA (INSUMOS INDUSTRIALES)
 CREATE TABLE IF NOT EXISTS inventory_insumos (
     id VARCHAR(50) PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
@@ -37,9 +41,11 @@ CREATE TABLE IF NOT EXISTS inventory_insumos (
     stock_current DECIMAL(12,2) DEFAULT 0,
     stock_min DECIMAL(12,2) DEFAULT 0,
     provider VARCHAR(255),
-    last_restock TIMESTAMP WITH TIME ZONE
+    last_restock TIMESTAMP WITH TIME ZONE,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
+-- SISTEMA DE ÓRDENES Y CITAS DE PRODUCCIÓN
 CREATE TABLE IF NOT EXISTS orders (
     id VARCHAR(50) PRIMARY KEY,
     client_name VARCHAR(255) NOT NULL,
@@ -48,9 +54,11 @@ CREATE TABLE IF NOT EXISTS orders (
     status VARCHAR(20) DEFAULT 'Pendiente' CHECK (status IN ('Pendiente', 'Pagado', 'Proceso', 'Cancelado', 'Entregado')),
     production_stage INTEGER DEFAULT 0,
     tracking_id VARCHAR(100),
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
+-- AUDITORÍA Y LOGS DEL SISTEMA
 CREATE TABLE IF NOT EXISTS system_logs (
     id SERIAL PRIMARY KEY,
     timestamp TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
@@ -60,7 +68,7 @@ CREATE TABLE IF NOT EXISTS system_logs (
     user_id UUID REFERENCES users(id)
 );
 
--- Inserción de Tu Usuario Maestro CEO (Protocolo Aurum Master)
+-- SEEDING INICIAL: ACCESO CEO MAESTRO
 INSERT INTO users (email, password, role, status, bio) 
-VALUES ('ceo@luminaflex.mx', 'Aurum_741_Master', 'CEO', 'Online', 'Fundador de Tu Legado Visual.')
+VALUES ('ceo@luminaflex.mx', 'Aurum_741_Master', 'CEO', 'Online', 'Fundador de Luminaflex OS.')
 ON CONFLICT (email) DO NOTHING;
