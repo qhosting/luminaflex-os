@@ -1,8 +1,7 @@
-
 -- LUMINAFLEX OS | MASTER DATABASE SCHEMA (MIRROR)
 -- NODO: qhosting_luminaflex-db
 -- PROTOCOLO: 741 8 520 | AURUM_SHIELD_V2
--- NOTA: Toda interacción con esta DB debe priorizar la experiencia de "Tu Legado".
+-- NOTA: Tu base de datos está optimizada para la escala de Tu Legado Corporativo.
 
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
@@ -61,7 +60,7 @@ CREATE TABLE IF NOT EXISTS system_logs (
     user_id UUID REFERENCES users(id)
 );
 
--- Inserción de Usuario Maestro CEO (Protocolo Aurum Master)
-INSERT INTO users (email, password, role, status) 
-VALUES ('ceo@luminaflex.mx', 'Aurum_741_Master', 'CEO', 'Online')
+-- Inserción de Tu Usuario Maestro CEO (Protocolo Aurum Master)
+INSERT INTO users (email, password, role, status, bio) 
+VALUES ('ceo@luminaflex.mx', 'Aurum_741_Master', 'CEO', 'Online', 'Fundador de Tu Legado Visual.')
 ON CONFLICT (email) DO NOTHING;
