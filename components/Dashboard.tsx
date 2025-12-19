@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { 
   Scissors, 
@@ -70,14 +69,20 @@ interface Toast {
 }
 
 interface GroundingChunk {
-  web?: { uri: string; title: string };
+  web?: { uri?: string; title?: string };
+}
+
+interface ChatHistoryItem {
+  role: 'user' | 'model';
+  text: string;
+  grounding?: GroundingChunk[];
 }
 
 export const Dashboard: React.FC<{ role: UserRole }> = ({ role }) => {
   const [activeTab, setActiveTab] = useState<TabType>('PRODUCTION');
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [aiMessage, setAiMessage] = useState('');
-  const [aiHistory, setAiHistory] = useState<{role: 'user' | 'model', text: string, grounding?: GroundingChunk[]}[]>([]);
+  const [aiHistory, setAiHistory] = useState<ChatHistoryItem[]>([]);
   const [isAiLoading, setIsAiLoading] = useState(false);
   const [toasts, setToasts] = useState<Toast[]>([]);
   
@@ -183,8 +188,14 @@ export const Dashboard: React.FC<{ role: UserRole }> = ({ role }) => {
         }
       });
 
-      const grounding = response.candidates?.[0]?.groundingMetadata?.groundingChunks;
-      setAiHistory(prev => [...prev, { role: 'model', text: response.text || '', grounding }]);
+      const grounding = response.candidates?.[0]?.groundingMetadata?.groundingChunks as GroundingChunk[] | undefined;
+      const modelResponse: ChatHistoryItem = { 
+        role: 'model', 
+        text: response.text || '', 
+        grounding 
+      };
+      
+      setAiHistory(prev => [...prev, modelResponse]);
     } catch (error) {
       addToast('Error en enlace cognitivo AI.', 'error');
     } finally {
@@ -325,9 +336,9 @@ export const Dashboard: React.FC<{ role: UserRole }> = ({ role }) => {
                              <Globe size={10} className="mr-2" /> Fuentes de Verificación:
                            </p>
                            <div className="flex flex-wrap gap-2">
-                             {chat.grounding.map((chunk, j) => chunk.web && (
+                             {chat.grounding.map((chunk, j) => chunk.web && chunk.web.uri && (
                                <a key={j} href={chunk.web.uri} target="_blank" rel="noopener noreferrer" className="text-[8px] bg-white/5 px-2 py-1 rounded border border-white/10 hover:bg-[#4DEEEA]/20 transition-all flex items-center text-[#A0A0A0] hover:text-white">
-                                 {chunk.web.title} <ExternalLink size={8} className="ml-1" />
+                                 {chunk.web.title || 'Enlace'} <ExternalLink size={8} className="ml-1" />
                                </a>
                              ))}
                            </div>
