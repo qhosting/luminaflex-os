@@ -4,7 +4,7 @@ Este listado detalla las tareas técnicas específicas pendientes para llevar el
 
 ## General
 - [ ] **Eliminar Mock Data**: Reemplazar todos los `useState` inicializados con datos estáticos (ej. `projects` en `ProductionManager`, `orders` en `OrdersManager`) por llamadas a API (`useEffect` + `fetch`/`axios`).
-- [ ] **Health Check Real**: Reemplazar el `setTimeout` en `App.tsx` con un endpoint real de verificación de estado del backend/DB (`/api/health`).
+- [x] **Health Check Real**: Implementado endpoint `/api/health` y conectado en `App.tsx`.
 - [ ] **Manejo de Errores Global**: Implementar un sistema de notificaciones (Toasts) conectado a las respuestas de error de la API.
 
 ## Autenticación (Auth)

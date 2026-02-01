@@ -3,8 +3,8 @@
 Este documento describe la hoja de ruta para el desarrollo y evolución de **Luminaflex OS**, transformando el prototipo actual en un sistema ERP robusto y funcional.
 
 ## Fase 1: Fundamentos y Backend (Q1)
-- [ ] **Arquitectura del Backend**: Establecer un servidor Node.js/Express o similar para manejar la lógica de negocio.
-- [ ] **Base de Datos**: Implementar la conexión persistente con PostgreSQL usando el esquema definido (`schema.sql`).
+- [x] **Arquitectura del Backend**: Establecer un servidor Node.js/Express o similar para manejar la lógica de negocio.
+- [x] **Base de Datos**: Implementar la conexión persistente con PostgreSQL usando el esquema definido (`schema.sql`).
 - [ ] **API RESTful / GraphQL**: Desarrollar endpoints para las operaciones CRUD de cada módulo (Pedidos, Inventario, Producción, etc.).
 - [ ] **Seguridad**: Implementar autenticación robusta (JWT/OAuth) y manejo de sesiones seguro.
 
